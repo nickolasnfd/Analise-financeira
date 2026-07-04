@@ -1,6 +1,6 @@
 # SPEC — Dashboard simplificado da carteira
 
-**Status:** Em revisão
+**Status:** Aprovado
 **Criado em:** 2026-07-03
 **Projeto:** Análise Financeira
 **Substitui/depende de:** —
@@ -93,3 +93,11 @@ O usuário faz login, adiciona um ativo (ex: `MXRF11`, quantidade e preço médi
 - Criar/provisionar projeto Supabase (se a pergunta 2 for "criar novo")
 - Aplicar migration de schema no Supabase (passo 2)
 - Remover posição da carteira é deleção de dado do próprio usuário via UI — comportamento previsto da feature, confirmado a cada clique pela própria interface (não exige aprovação de sessão)
+
+---
+
+## FASE 3 — APROVAÇÃO
+
+**Aprovado por:** Nickolas
+**Data:** 2026-07-04
+**Observações da revisão:** Aprovado sem ressalvas após fechamento das 4 perguntas em aberto (token brapi a gerar, projeto Supabase novo, login email+senha, indicadores confirmados).

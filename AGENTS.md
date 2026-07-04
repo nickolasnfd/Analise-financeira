@@ -2,6 +2,12 @@
 
 > **O que é este arquivo:** a fonte de verdade do projeto. Claude Code, Antigravity e ferramentas compatíveis com a convenção AGENTS.md leem este arquivo automaticamente no início de cada sessão. Specs de feature (em `/specs`) NUNCA podem contradizer este arquivo — se um conflito surgir, este arquivo é atualizado primeiro, conscientemente.
 
+<!-- BEGIN:nextjs-agent-rules -->
+# This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
+<!-- END:nextjs-agent-rules -->
+
 ---
 
 ## 0. Protocolo de início de sessão (o agente MUST seguir isto antes de qualquer tarefa)
