@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { logout } from '@/lib/auth-actions'
+import { getMarketData } from '@/lib/market/service'
 import type { Position } from '@/lib/portfolio/types'
 import { AddPositionForm } from './add-position-form'
 import { PositionRow } from './position-row'
@@ -20,6 +21,12 @@ export default async function DashboardPage() {
     .order('ticker')
 
   const rows = (positions ?? []) as Position[]
+
+  // Fetch market data for every position in parallel (each response is cached
+  // for 15 min by the brapi client).
+  const markets = await Promise.all(
+    rows.map((p) => getMarketData(p.ticker, p.asset_type)),
+  )
 
   return (
     <main className="mx-auto max-w-5xl p-6">
@@ -49,8 +56,8 @@ export default async function DashboardPage() {
           </p>
         ) : (
           <div>
-            {rows.map((p) => (
-              <PositionRow key={p.id} position={p} />
+            {rows.map((p, i) => (
+              <PositionRow key={p.id} position={p} market={markets[i]} />
             ))}
           </div>
         )}
