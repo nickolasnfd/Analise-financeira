@@ -8,12 +8,7 @@ import {
 } from '@/lib/portfolio/actions'
 import type { Position } from '@/lib/portfolio/types'
 import type { MarketData } from '@/lib/market/service'
-
-const brl = (n: number) =>
-  n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
-const dec = (n: number) => n.toLocaleString('pt-BR', { maximumFractionDigits: 2 })
-const pct = (n: number) => `${n >= 0 ? '+' : ''}${dec(n)}%`
-const dt = (iso: string) => new Date(iso).toLocaleString('pt-BR')
+import { brl, dec, pct, dateTime } from '@/lib/format'
 
 // Indicator units (ROE/DY fraction vs. percent) are LIVE-PENDING; show the raw
 // value to 2 decimals and "—" when absent — never a fabricated number.
@@ -55,7 +50,7 @@ function MarketMetrics({
         </span>
       ))}
       <span className="w-full text-xs text-black/50 dark:text-white/50">
-        Coletado em {dt(market.collectedAt)}
+        Coletado em {dateTime(market.collectedAt)}
       </span>
     </div>
   )

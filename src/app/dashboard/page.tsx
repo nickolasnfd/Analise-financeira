@@ -5,6 +5,7 @@ import { getMarketData } from '@/lib/market/service'
 import type { Position } from '@/lib/portfolio/types'
 import { AddPositionForm } from './add-position-form'
 import { PositionRow } from './position-row'
+import { PortfolioTotals } from './portfolio-totals'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -44,6 +45,12 @@ export default async function DashboardPage() {
           </button>
         </form>
       </header>
+
+      {rows.length > 0 && (
+        <section className="mt-6">
+          <PortfolioTotals positions={rows} markets={markets} />
+        </section>
+      )}
 
       <section className="mt-6">
         <AddPositionForm />
