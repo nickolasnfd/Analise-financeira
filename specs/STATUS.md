@@ -3,7 +3,8 @@
 Projeto iniciado em 2026-07-03. Harness SDD instalado.
 
 ## Em andamento
-- `specs/dashboard-carteira.md` — Dashboard simplificado da carteira (status: Aprovado, iniciando implementação, passo 1/8)
+- `specs/dashboard-carteira.md` — Dashboard simplificado da carteira (status: Aprovado, implementação passos 1-6/8 concluídos; faltam 7 (view do dashboard) e 8 (totais/estados)).
+  - Verificação live (login real, persistência, cotação) fica pendente: egress desta sessão bloqueia `*.supabase.co` e `brapi.dev` (ver LEARNINGS). Confirmar após deploy Vercel / execução local.
 
 ## Concluído
 - (nada ainda)
