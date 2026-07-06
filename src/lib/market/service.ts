@@ -1,11 +1,12 @@
 // Normalizes a raw brapi quote into the shape the dashboard consumes.
 // Missing indicators become `null` (rendered as "—") — never a fabricated value.
 //
-// LIVE-PENDING field guesses (not confirmed against a live token this session):
-// stock ROE -> financialData.returnOnEquity; DY -> dividendYield;
-// FII P/VP -> defaultKeyStatistics.priceToBook | priceToNav;
-// FII DY -> dividendYield | dividendYield12m. A wrong key yields "—", not a
-// wrong number, so the dashboard degrades honestly until confirmed.
+// CONFIRMED free-plan contract (2026-07-06, live token): quote + fundamental=true
+// exposes price, day change %, time and priceEarnings (P/L; may be null for
+// FIIs). dividendYield, ROE (financialData) and P/VP (defaultKeyStatistics) are
+// paid-module fields → they stay null and render as "—" on the free plan (the
+// trade-off approved in the spec, question 4). The defensive reads below light
+// up automatically if the plan is ever upgraded.
 
 import { fetchQuote } from '@/lib/brapi/client'
 

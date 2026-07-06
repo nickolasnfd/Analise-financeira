@@ -131,9 +131,10 @@ O usuário faz login, adiciona um ativo (ex: `MXRF11`, quantidade e preço médi
 
 **Aprendizados → LEARNINGS.md:** registrado o bloqueio de egress a `*.supabase.co`/`brapi.dev` nesta sessão e o padrão de contorno (verificar em deploy/local).
 
+> **Correção pós-deploy (2026-07-06):** o primeiro teste live falhou ao adicionar ativo. Diagnóstico via logs (Vercel + Supabase) e laboratório SQL→brapi: o plano gratuito da brapi responde **403** ao parâmetro `modules=` — a validação de ticker falhava antes do insert. Corrigido removendo `modules=` do cliente; contrato do plano free confirmado com token real (P/L disponível; DY/ROE/P/VP → "—", trade-off já aprovado na pergunta 4). Segunda descoberta: *Site URL* do Supabase Auth estava no padrão localhost — email de confirmação redirecionava para `localhost:3000` (correção manual no dashboard do Supabase). Ver LEARNINGS.md.
+
 ### Checklist de validação pós-deploy (a executar por Nickolas)
-- [ ] Configurar `BRAPI_TOKEN`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` (local `.env.local` e/ou Vercel).
-- [ ] Criar conta pela tela de login (verificar setting de confirmação de email no Supabase se o login não entrar direto).
-- [ ] Adicionar `MXRF11` (FII) e uma ação (ex: `PETR4`) e conferir cotação, variação, valor, resultado, indicadores e timestamp.
-- [ ] Conferir os nomes de campo dos indicadores (ROE, P/VP, DY): se aparecerem "—" indevidamente, ajustar as chaves em `src/lib/market/service.ts` conforme a resposta real.
+- [x] Configurar `BRAPI_TOKEN`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` (local `.env.local` e/ou Vercel). *(feito 2026-07-06; login em produção funcionou)*
+- [x] Criar conta pela tela de login. *(feito 2026-07-06 — obs.: corrigir Site URL no Supabase Auth para a URL de produção)*
+- [ ] Adicionar `MXRF11` (FII) e uma ação (ex: `PETR4`) e conferir cotação, variação, valor, resultado e timestamp (indicadores DY/ROE/P/VP aparecem como "—" no plano free; P/L aparece para ações).
 - [ ] Testar ticker inválido (erro, não persiste), editar e remover posição, e conferir os totais.
