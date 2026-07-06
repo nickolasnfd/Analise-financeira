@@ -1,6 +1,6 @@
 # SPEC — Página do ativo com relatórios gerenciais (CVM)
 
-**Status:** Draft
+**Status:** Aprovado
 **Criado em:** 2026-07-06
 **Projeto:** Análise Financeira
 **Substitui/depende de:** depende de `specs/dashboard-carteira.md` (indicadores de mercado por ticker já existem)
@@ -91,9 +91,9 @@ O usuário digita um ticker (da carteira ou não) no campo de busca, chega em `/
 
 ## FASE 3 — APROVAÇÃO
 
-**Aprovado por:**
-**Data:**
-**Observações da revisão:**
+**Aprovado por:** Nickolas
+**Data:** 2026-07-06
+**Observações da revisão:** Aprovado sem ressalvas após brainstorming (uso do companheiro visual para navegação/layout) e fechamento das perguntas de escopo (fonte CVM, sem LLM nesta fase, qualquer ticker, últimos 4 relatórios, busca no dashboard, layout empilhado).
 
 ---
 
