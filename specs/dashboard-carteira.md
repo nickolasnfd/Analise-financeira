@@ -1,6 +1,6 @@
 # SPEC — Dashboard simplificado da carteira
 
-**Status:** Aprovado
+**Status:** Implementado (código 8/8) — validação live pendente (deploy/local)
 **Criado em:** 2026-07-03
 **Projeto:** Análise Financeira
 **Substitui/depende de:** —
@@ -101,3 +101,39 @@ O usuário faz login, adiciona um ativo (ex: `MXRF11`, quantidade e preço médi
 **Aprovado por:** Nickolas
 **Data:** 2026-07-04
 **Observações da revisão:** Aprovado sem ressalvas após fechamento das 4 perguntas em aberto (token brapi a gerar, projeto Supabase novo, login email+senha, indicadores confirmados).
+
+---
+
+## FASE 5 — VALIDAÇÃO
+
+> **Contexto de ambiente:** implementação feita numa sessão remota cujo egress bloqueia `*.supabase.co` e `brapi.dev` (ver `LEARNINGS.md`). Por isso, verificações que exigem login real, persistência ou cotação ao vivo ficam **live-pending**: o código está pronto e passa typecheck/build/lint/render, mas o round-trip real só pode ser confirmado após deploy na Vercel ou execução local com as variáveis de ambiente configuradas.
+
+### 9. Registro de validação
+
+| Critério de aceite (EARS) | Resultado | Como foi testado |
+|--------------------|-----------|------------------|
+| Não autenticado em `/dashboard` → redireciona para login | ✅ | `curl` no dev server: `GET /dashboard` → `307` para `/login` |
+| Adiciona ativo válido → persiste e exibe em <10s com cotação, variação e indicadores | ⏳ live-pending | Código pronto (server action + `getMarketData`); requer Supabase+brapi acessíveis |
+| Dashboard exibe data/hora da coleta | ⏳ live-pending | UI renderiza "Coletado em …" (verificado estruturalmente); valor depende de dado live |
+| Edita quantidade/PM → recalcula valor e resultado | ⏳ live-pending | `updatePosition` + cálculo no `PositionRow` prontos; requer dado persistido |
+| Remove posição → some e atualiza totais | ⏳ live-pending | `removePosition` + `revalidatePath` prontos; requer dado persistido |
+| Ticker inválido → erro claro, não persiste | ⏳ live-pending | Ramo `invalid_ticker` implementado; requer brapi acessível |
+| brapi 402/indisponível → exibe indisponível sem quebrar | ⚟ parcial | Ramo `!available` renderiza aviso (verificado estruturalmente via build); status real requer brapi |
+| Indicador ausente → mostra "—" | ✅ (código) | Normalizador retorna `null` → UI renderiza "—"; verificado por typecheck/leitura; valor real live-pending |
+
+**Regressões verificadas:** projeto greenfield — sem funcionalidade pré-existente para regredir. Build/typecheck/lint limpos após cada passo.
+
+**Desvios do plano:**
+- Next.js 16 renomeou `middleware` → `proxy.ts` (regra do AGENTS confirmou o breaking change antes de codar).
+- Nomes de campo de fundamentos da brapi (ROE, P/VP, DY) ficaram **live-pending** — lidos defensivamente, com "—" para ausência, sem inventar valor.
+- Passo 4 ("spike de contrato") não pôde ser executado ao vivo (egress bloqueado + token só obtido depois); virou cliente defensivo + documentação da suposição.
+- `specs/TOKENS-ECONOMY.md` adicionado pelo usuário durante a implementação (fora do escopo desta feature).
+
+**Aprendizados → LEARNINGS.md:** registrado o bloqueio de egress a `*.supabase.co`/`brapi.dev` nesta sessão e o padrão de contorno (verificar em deploy/local).
+
+### Checklist de validação pós-deploy (a executar por Nickolas)
+- [ ] Configurar `BRAPI_TOKEN`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` (local `.env.local` e/ou Vercel).
+- [ ] Criar conta pela tela de login (verificar setting de confirmação de email no Supabase se o login não entrar direto).
+- [ ] Adicionar `MXRF11` (FII) e uma ação (ex: `PETR4`) e conferir cotação, variação, valor, resultado, indicadores e timestamp.
+- [ ] Conferir os nomes de campo dos indicadores (ROE, P/VP, DY): se aparecerem "—" indevidamente, ajustar as chaves em `src/lib/market/service.ts` conforme a resposta real.
+- [ ] Testar ticker inválido (erro, não persiste), editar e remover posição, e conferir os totais.
