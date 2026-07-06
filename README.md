@@ -1,36 +1,91 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Análise Financeira
 
-## Getting Started
+Aplicação pessoal para acompanhar a carteira de investimentos (Ações B3 e FIIs)
+com cotações e indicadores atualizados. Stack: Next.js (App Router, TypeScript),
+Supabase (Postgres + Auth), dados de mercado via [brapi.dev](https://brapi.dev),
+deploy na Vercel.
 
-First, run the development server:
+> A constituição do projeto está em [`AGENTS.md`](./AGENTS.md); o estado atual e
+> os specs em [`specs/`](./specs).
+
+---
+
+## Variáveis de ambiente
+
+A aplicação precisa de **3 variáveis**. Nunca as comite — o arquivo `.env.local`
+já está no `.gitignore`. Use [`.env.example`](./.env.example) como modelo.
+
+| Variável | O que é | Onde obter |
+|----------|---------|------------|
+| `NEXT_PUBLIC_SUPABASE_URL` | URL do projeto Supabase | Supabase → seu projeto → **Project Settings → Data API** (campo *Project URL*) |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Chave pública (publishable/anon) do Supabase | Supabase → **Project Settings → API Keys** (chave *anon/publishable*) |
+| `BRAPI_TOKEN` | Token da API brapi.dev (plano gratuito) | [brapi.dev](https://brapi.dev) → sua conta → *Meu Token* |
+
+> As duas variáveis `NEXT_PUBLIC_*` são públicas por natureza (vão para o
+> navegador e são protegidas por RLS no banco). O `BRAPI_TOKEN` é **secreto** e
+> fica só no servidor — nunca o exponha no cliente nem em commits.
+
+---
+
+## Rodar localmente
 
 ```bash
+# 1. Instalar dependências
+npm install
+
+# 2. Criar o arquivo de ambiente e preencher os 3 valores
+cp .env.example .env.local
+# edite .env.local com os valores da tabela acima
+
+# 3. Subir o servidor de desenvolvimento
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Acesse `http://localhost:3000`. Você será levado à tela de login.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Deploy na Vercel
 
-## Learn More
+1. Conectar o repositório `nickolasnfd/Analise-financeira` a um projeto Vercel.
+2. Em **Settings → Environment Variables**, adicionar as 3 variáveis da tabela
+   acima (mesmos nomes e valores).
+3. Publicar. A Vercel detecta o Next.js automaticamente (`npm run build`).
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Banco de dados
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+O schema vive em [`supabase/migrations/`](./supabase/migrations). A tabela
+`portfolio_positions` (uma linha por ativo, modelo de preço médio) tem RLS
+ativa — cada usuário só enxerga as próprias posições.
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Primeiro uso (checklist)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Depois de configurar as variáveis e subir o app (local ou Vercel):
+
+1. Criar sua conta pela tela de login (botão **Criar conta**). Se o login não
+   entrar direto, verifique em *Supabase → Authentication → Providers → Email*
+   se a confirmação de email está ativa.
+2. Adicionar um FII (ex: `MXRF11`) e uma ação (ex: `PETR4`) e conferir cotação,
+   variação do dia, valor da posição, resultado, indicadores e a data/hora da
+   coleta.
+3. Se algum indicador (ROE, P/VP, DY) aparecer como `—` indevidamente, ajustar
+   as chaves de campo em [`src/lib/market/service.ts`](./src/lib/market/service.ts)
+   conforme a resposta real da brapi.
+
+O checklist completo de validação está na FASE 5 de
+[`specs/dashboard-carteira.md`](./specs/dashboard-carteira.md).
+
+---
+
+## Scripts
+
+| Comando | Ação |
+|---------|------|
+| `npm run dev` | Servidor de desenvolvimento |
+| `npm run build` | Build de produção |
+| `npm run start` | Servir o build |
+| `npm run lint` | ESLint |
