@@ -15,6 +15,8 @@ const REVALIDATE_SECONDS = 900 // 15 min cache to respect the free-plan quota
 
 export type BrapiQuoteRaw = {
   symbol?: string
+  shortName?: string
+  longName?: string
   regularMarketPrice?: number
   regularMarketChangePercent?: number
   regularMarketTime?: string | number

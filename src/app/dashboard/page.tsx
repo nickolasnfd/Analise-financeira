@@ -6,6 +6,7 @@ import type { Position } from '@/lib/portfolio/types'
 import { AddPositionForm } from './add-position-form'
 import { PositionRow } from './position-row'
 import { PortfolioTotals } from './portfolio-totals'
+import { TickerSearchForm } from './ticker-search-form'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -36,6 +37,7 @@ export default async function DashboardPage() {
           <h1 className="text-2xl font-semibold">Carteira</h1>
           <p className="text-sm text-black/60 dark:text-white/60">{user.email}</p>
         </div>
+        <TickerSearchForm />
         <form action={logout}>
           <button
             type="submit"
